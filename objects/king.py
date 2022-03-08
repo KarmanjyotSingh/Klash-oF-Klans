@@ -17,19 +17,26 @@ class King(Troop):
         self.damage = macros.KING_DAMAGE
         self.movement_speed = macros.KING_MOVEMENT_SPEED
 
-    def moveKing(self, village):
-        char = input_to(Get().__call__)
-        
-        if char == 'w':
-            if self.position[1] > 0:
-                self.position = (self.position[0], self.position[1] - 1)
-        elif char == 'a':
+    
+    def moveKing(self, char, village):
+        #  just to check health bar 
+        if char == '1':
+            self.health -= int(1)
+        elif char == 'w':
+            # is present at the top edge of the game
             if self.position[0] > 0:
-                self.position = (self.position[0] - 1, self.position[1])
+                if village.tiles[self.position[0]-1][self.position[1]] == macros.EMPTY:
+                    self.position = (self.position[0] - 1, self.position[1])
         elif char == 's':
-            if self.position[1] < village.height - 1:
-                self.position = (self.position[0], self.position[1] + 1)
+            if self.position[0] < village.height - 1:
+                if village.tiles[self.position[0]+1][self.position[1]] == macros.EMPTY:
+                    self.position = (self.position[0] + 1, self.position[1])
+        elif char == 'a':
+            if self.position[1] > 0:
+                if village.tiles[self.position[0]][self.position[1]-1] == macros.EMPTY:
+                    self.position = (self.position[0], self.position[1] - 1)
         elif char == 'd':
-            if self.position[0] < village.width - 1:
-                self.position = (self.position[0] + 1, self.position[1]) 
-        return char
+            if self.position[1] < village.width - 1:
+                if village.tiles[self.position[0]][self.position[1]+1] == macros.EMPTY:
+                    self.position = (self.position[0], self.position[1] + 1)
+        # elif char == ' ':

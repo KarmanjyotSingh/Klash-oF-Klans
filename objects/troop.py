@@ -1,11 +1,8 @@
 # define the troop class here
 
-from numpy import True_
-
-
 class Troop():
 
-    def __init__(self, x, y, dimensions=(1, 1), health=50, damage=10):
+    def __init__(self, x, y, dimensions=(1, 1), health=50, damage=10 , speed = 1):
 
         # specify the position of the troop
         # the position at which the troop is spawn
@@ -21,7 +18,7 @@ class Troop():
         # set the damage for the player
         self.damage = damage
         # set the movement speed for the troop
-        self.movement_speed = 10
+        self.movement_speed = speed
 
     def set_position(self, x, y):
         self.position = (x, y)
