@@ -7,7 +7,7 @@ from king import King
 from townhall import TownHall
 from hut import Hut
 from cannon import Cannon
-
+from wall import Wall
 
 class Village():
 
@@ -30,6 +30,44 @@ class Village():
         self.cannons = [Cannon(x, y) for (x, y) in self.coordCannon]
         self.spawningPoints = [
             (int(macros.VILLAGE_HEIGHT)-2, int(macros.VILLAGE_WIDTH/2)), (int(macros.VILLAGE_HEIGHT/2), int(macros.VILLAGE_WIDTH)-2), (int(macros.VILLAGE_HEIGHT/2), 1)]
+        self.coordWall = []
+        left = int((macros.VILLAGE_WIDTH/2) - 10) - 3
+        right = int(macros.VILLAGE_WIDTH/2 - 10 +
+                    len(self.townhall.drawing[0])-1)+3
+        top = int(macros.VILLAGE_HEIGHT/2)-3
+        bottom = int(macros.VILLAGE_HEIGHT/2 + len(self.townhall.drawing)-1)+3
+        self.walls = []
+        for i in range(top, bottom+1):
+            self.coordWall.append((i, left, 2))
+            self.coordWall.append((i, right, 1))
+
+        for j in range(left, right):
+            self.coordWall.append((top, j, 3))
+            self.coordWall.append((bottom, j, 2))
+        left -= 4
+        right += 4
+        top -= 5
+        bottom += 5
+        for i in range(top, bottom+1):
+            self.coordWall.append((i, left, 1))
+            self.coordWall.append((i, right, 2))
+
+        for j in range(left, right):
+            self.coordWall.append((top, j, 2))
+            self.coordWall.append((bottom, j, 3))
+
+        for (x, y, level) in self.coordWall:
+            self.walls.append(Wall(x=x, y=y, level=level))
+
+        self.activeBuildings = []
+
+        for coord in self.coordCannon:
+            self.activeBuildings.append(coord)
+        for coord in self.coordHut:
+            self.activeBuildings.append(coord)
+        for i in range(macros.COORD_TOWN_HALL[0], macros.COORD_TOWN_HALL[0] + len(self.townhall.drawing)):
+            for j in range(macros.COORD_TOWN_HALL[1], macros.COORD_TOWN_HALL[1] + len(self.townhall.drawing[0])):
+                self.activeBuildings.append((i, j))
 
     def renderScoreBoard(self):
 
@@ -42,28 +80,10 @@ class Village():
             self.village[3
                          ][macros.VILLAGE_WIDTH+i] = Back.RED+' ' + Style.RESET_ALL
 
-    def drawWalls(self, top, bottom, left, right, level=1):
-
-        wall_level = macros.WALL_LEVEL_1
-        tile_level = macros.TILE_WALL_LEVEL_1
-        if level == 2:
-            wall_level = macros.WALL_LEVEL_2
-            tile_level = macros.TILE_WALL_LEVEL_2
-        elif level == 3:
-            wall_level = macros.WALL_LEVEL_3
-            tile_level = macros.TILE_WALL_LEVEL_3
-
-        for i in range(top, bottom+1):
-            self.village[i][left] = wall_level
-            self.village[i][right] = wall_level
-            self.tiles[i][left] = tile_level
-            self.tiles[i][right] = tile_level
-
-        for j in range(left, right):
-            self.village[top][j] = wall_level
-            self.village[bottom][j] = wall_level
-            self.tiles[top][j] = tile_level
-            self.tiles[bottom][j] = tile_level
+    def drawWalls(self):
+        for i in self.walls:
+            self.village[i.position[0]][i.position[1]] = i.texture
+            self.tiles[i.position[0]][i.position[1]] = i.tile
 
     def render(self):
         # initialize the village
@@ -83,49 +103,47 @@ class Village():
                         # background pixel
                         self.village[i][j] = macros.BACKGROUND_PIXEL
 
-        # render the king
-        self.village[self.king.position[0]
-                     ][self.king.position[1]] = macros.KING_TILE
-
         # render the main town hall
         for row in range(0, len(self.townhall.drawing)):
             for col in range(0, len(self.townhall.drawing[row])):
-                self.tiles[macros.COORD_TOWN_HALL[0] +
-                           row][macros.COORD_TOWN_HALL[1] + col] = macros.TOWN_HALL
-                self.village[macros.COORD_TOWN_HALL[0]+row][macros.COORD_TOWN_HALL[1] +
-                                                            col] = Back.GREEN + Fore.RED + self.townhall.drawing[row][col] + Style.RESET_ALL
-
-        # render walls around the townhall
-        left = int((macros.VILLAGE_WIDTH/2) - 10) - 3
-        right = int(macros.VILLAGE_WIDTH/2 - 10 +
-                    len(self.townhall.drawing[row])-1)+3
-        top = int(macros.VILLAGE_HEIGHT/2)-3
-        bottom = int(macros.VILLAGE_HEIGHT/2 + len(self.townhall.drawing)-1)+3
-
-        self.drawWalls(top, bottom, left, right)
-
-        # render the cannons
+                if self.townhall.health > 0:
+                    self.tiles[macros.COORD_TOWN_HALL[0] +
+                               row][macros.COORD_TOWN_HALL[1] + col] = macros.TOWN_HALL
+                    self.village[macros.COORD_TOWN_HALL[0]+row][macros.COORD_TOWN_HALL[1] +
+                                                                col] = Back.GREEN + Fore.RED + self.townhall.drawing[row][col] + Style.RESET_ALL
+                else:
+                    self.tiles[macros.COORD_TOWN_HALL[0] +
+                               row][macros.COORD_TOWN_HALL[1] + col] = macros.EMPTY
+                    self.village[macros.COORD_TOWN_HALL[0]+row][macros.COORD_TOWN_HALL[1] +
+                                                                col] = macros.BACKGROUND_PIXEL
+                    # render walls around the townhall
+        self.drawWalls()
 
         # render the village
         self.renderScoreBoard()
 
-        left -= 4
-        right += 4
-        top -= 5
-        bottom += 5
-        self.drawWalls(top, bottom, left, right, 2)
-
         # render the huts
+        itr = 0
         for (x, y) in self.coordHut:
-            self.village[x][y] = macros.HUT
-            self.tiles[x][y] = macros.HUT_TILE
-
+            self.village[x][y] = self.huts[itr].texture
+            self.tiles[x][y] = self.huts[itr].tile
+            itr += 1
+        itr = 0
+        # render the cannons
         for (x, y) in self.coordCannon:
-            self.village[x][y] = macros.CANNON
-            self.tiles[x][y] = macros.CANNON_TILE
+            self.village[x][y] = self.cannons[itr].texture
+            self.tiles[x][y] = self.cannons[itr].tile
+            itr += 1
+        # render the spawning points
         for (x, y) in self.spawningPoints:
             self.village[x][y] = macros.RED_PIXEL
+
+        # render the king
+        self.village[self.king.position[0]
+                     ][self.king.position[1]] = macros.KING_TILE
+
         # finally draw the village
+
         for row in range(macros.DISPLAY_HEIGHT):
             for col in range(macros.DISPLAY_WIDTH):
                 print(self.village[row][col],

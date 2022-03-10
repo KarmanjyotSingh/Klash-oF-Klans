@@ -10,3 +10,5 @@ class Cannon(Building):
         self.damage = macros.CANNON_DAMAGE
         # define the last shot time
         self.last_shot = 0
+        self.texture = macros.CANNON
+        self.tile = macros.CANNON_TILE
