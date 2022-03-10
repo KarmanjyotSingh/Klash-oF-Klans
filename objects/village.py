@@ -8,6 +8,8 @@ from townhall import TownHall
 from hut import Hut
 from cannon import Cannon
 from wall import Wall
+from barbarians import Barabarian
+
 
 class Village():
 
@@ -25,8 +27,8 @@ class Village():
         self.coordHut = [(1, 1), (1, macros.VILLAGE_WIDTH-2), (macros.VILLAGE_HEIGHT -
                                                                2, macros.VILLAGE_WIDTH-2), (macros.VILLAGE_HEIGHT-2, 1), (1, int(macros.VILLAGE_WIDTH/2))]
         self.huts = [Hut(x, y) for (x, y) in self.coordHut]
-        self.coordCannon = [(macros.COORD_TOWN_HALL[0]-4, macros.COORD_TOWN_HALL[1]+5 + len(self.townhall.drawing[0])), (macros.COORD_TOWN_HALL[0] -
-                            4, macros.COORD_TOWN_HALL[1]-4), (macros.COORD_TOWN_HALL[0]+len(self.townhall.drawing) + 3, macros.COORD_TOWN_HALL[1]+5 + len(self.townhall.drawing[0])), (macros.COORD_TOWN_HALL[0]+len(self.townhall.drawing) + 3, macros.COORD_TOWN_HALL[1]-4)]
+        self.coordCannon = [(macros.COORD_TOWN_HALL[0]-4, macros.COORD_TOWN_HALL[1]+3 + len(self.townhall.drawing[0])), (macros.COORD_TOWN_HALL[0] -
+                            4, macros.COORD_TOWN_HALL[1]-4), (macros.COORD_TOWN_HALL[0]+len(self.townhall.drawing) + 3, macros.COORD_TOWN_HALL[1]+3 + len(self.townhall.drawing[0])), (macros.COORD_TOWN_HALL[0]+len(self.townhall.drawing) + 3, macros.COORD_TOWN_HALL[1]-4)]
         self.cannons = [Cannon(x, y) for (x, y) in self.coordCannon]
         self.spawningPoints = [
             (int(macros.VILLAGE_HEIGHT)-2, int(macros.VILLAGE_WIDTH/2)), (int(macros.VILLAGE_HEIGHT/2), int(macros.VILLAGE_WIDTH)-2), (int(macros.VILLAGE_HEIGHT/2), 1)]
@@ -61,13 +63,24 @@ class Village():
 
         self.activeBuildings = []
 
+        # add all the cannons to the list
+
         for coord in self.coordCannon:
             self.activeBuildings.append(coord)
+
+        # add all the huts to the list
+
         for coord in self.coordHut:
             self.activeBuildings.append(coord)
+
+        # add all the townhall tiles to the list
+
+        # render the barbarians
         for i in range(macros.COORD_TOWN_HALL[0], macros.COORD_TOWN_HALL[0] + len(self.townhall.drawing)):
             for j in range(macros.COORD_TOWN_HALL[1], macros.COORD_TOWN_HALL[1] + len(self.townhall.drawing[0])):
                 self.activeBuildings.append((i, j))
+
+        self.barbarians = []
 
     def renderScoreBoard(self):
 
@@ -142,9 +155,19 @@ class Village():
         self.village[self.king.position[0]
                      ][self.king.position[1]] = macros.KING_TILE
 
+        # render barbarians
+        for barbarians in self.barbarians:
+            self.village[barbarians.position[0]
+                         ][barbarians.position[1]] = barbarians.texture
+       
         # finally draw the village
 
         for row in range(macros.DISPLAY_HEIGHT):
             for col in range(macros.DISPLAY_WIDTH):
                 print(self.village[row][col],
                       end='\n' if col == macros.DISPLAY_WIDTH-1 else '')
+
+    def moveBarbs(self):
+        print("Hi")
+        for barbs in self.barbarians:
+            barbs.move_barbarian(self)

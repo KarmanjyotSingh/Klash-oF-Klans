@@ -7,7 +7,6 @@ while(True):
     village.king.moveKing(ch, village)
     if ch == 'q':
         break
-    elif ch == None:
-        continue
     else:
         village.render()
+        village.moveBarbs()

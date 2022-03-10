@@ -2,6 +2,8 @@
 from troop import Troop
 import globals as macros
 from input import *
+from barbarians import Barabarian
+
 # define king as Troop , but control the king's position by the user
 # control king using wasd keys
 # space bar for using power up
@@ -42,6 +44,17 @@ class King(Troop):
         # elif char == ' ':
         elif char == ' ':
             self.attackKing(village)
+
+        # defining 1 , 2, 3 as spawning points
+        elif char == 'z':
+            village.barbarians.append(Barabarian(
+                village.spawningPoints[0][0], village.spawningPoints[0][1]))
+        elif char == 'x':
+            village.barbarians.append(Barabarian(
+                village.spawningPoints[1][0], village.spawningPoints[1][1]))
+        elif char == 'c':
+            village.barbarians.append(Barabarian(
+                village.spawningPoints[2][0], village.spawningPoints[2][1]))
 
     def attackKing(self, village):
         # axe vala attack , in radius of 5 tiles
