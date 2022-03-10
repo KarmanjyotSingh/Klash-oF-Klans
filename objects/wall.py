@@ -1,4 +1,5 @@
 from building import Building
+import globals as macros
 
 
 class Wall(Building):
@@ -8,4 +9,18 @@ class Wall(Building):
         self.type = "WALL"
         self.drawing = "#"
         self.level = level
-        
+        self.texture = macros.WALL_LEVEL_1
+        if level == 2:
+            self.texture = macros.WALL_LEVEL_2
+        elif level == 3:
+            self.texture = macros.WALL_LEVEL_3
+        self.tile = macros.TILE_WALL_LEVEL_1
+        if level == 2:
+            self.tile = macros.TILE_WALL_LEVEL_2
+        elif level == 3:
+            self.tile = macros.TILE_WALL_LEVEL_3
+        self.health = macros.HWALL_LEVEL_1
+        if level == 2:
+            self.health = macros.HWALL_LEVEL_2
+        elif level == 3:
+            self.health = macros.HWALL_LEVEL_3
