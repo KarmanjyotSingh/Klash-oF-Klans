@@ -2,7 +2,7 @@ from colorama import Fore, Style, Back
 DISPLAY_WIDTH = 210
 DISPLAY_HEIGHT = 50
 # village macros
-VILLAGE_WIDTH = 130
+VILLAGE_WIDTH = 100
 VILLAGE_HEIGHT = 50
 BORDER_PIXEL = Back.WHITE + ' ' + Style.RESET_ALL
 BACKGROUND_PIXEL = Back.GREEN + ' ' + Style.RESET_ALL

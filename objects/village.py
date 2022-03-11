@@ -110,20 +110,36 @@ class Village():
         return False
 
     def gameWon(self):
-        
+        sys('clear')
         for i in range(macros.DISPLAY_HEIGHT):
             for j in range(macros.DISPLAY_WIDTH):
                 # render the game border
-                if j < self.width and (j == 0 or j == self.width-1 or i == 0 or i == self.height-1):
+                if i == 0 or (j == 0 or j == macros.DISPLAY_WIDTH-1 or i == 0 or i == macros.DISPLAY_HEIGHT-1):
                     self.village[i][j] = macros.BORDER_PIXEL
-                    self.tiles[i][j] = -1
                 else:
-                    # the main score card area
-                    if j >= self.width:
-                        self.village[i][j] = macros.SCORECARD_PIXEL
-                    else:
-                        # background pixel
-                        self.village[i][j] = macros.BACKGROUND_PIXEL
+                    self.village[i][j] = Back.BLACK + \
+                        Fore.WHITE + ' ' + Style.RESET_ALL
+        f = open('gamewon.txt', 'r')
+        list = (''.join([line for line in f])).split('\n')
+        for line in list:
+            print(line)
+
+    def gameLost(self):
+        sys('clear')
+        for i in range(macros.DISPLAY_HEIGHT):
+            for j in range(macros.DISPLAY_WIDTH):
+                # render the game border
+                if i == 0 or (j == 0 or j == macros.DISPLAY_WIDTH-1 or i == 0 or i == macros.DISPLAY_HEIGHT-1):
+                    self.village[i][j] = macros.BORDER_PIXEL
+                else:
+                    self.village[i][j] = Back.BLACK + \
+                        Fore.WHITE + ' ' + Style.RESET_ALL
+        f = open('gamelost.txt', 'r')
+        list = (''.join([line for line in f])).split('\n')
+        r = 10
+        c = macros.VILLAGE_WIDTH-20
+        for line in list:
+            print(line)
 
     def renderScoreBoard(self):
 

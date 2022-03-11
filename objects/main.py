@@ -1,5 +1,6 @@
 from objects.village import Village
 from objects.input import *
+import objects.globals as macros
 
 
 def Run():
@@ -24,7 +25,7 @@ def Run():
             for i in inputArr:
                 file.write(str(i)+'\n')
             file.close()
-            
+            village.gameLost()
             break
         else:
             village.render()
@@ -40,4 +41,16 @@ def Run():
                 f = open('numreplay.txt', 'w')
                 f.write(str(n+1))
                 f.close()
+                village.gameWon()
                 break
+            else:
+                # game lost 
+                if village.campsize == macros.CAMP_SIZE:
+                    flag = False
+                    for barbs in village.barbarians:
+                        flag = barbs.alive
+                    if flag == False and village.king.alive == False:
+                        village.gameLost()
+                        break
+
+                

@@ -76,6 +76,7 @@ class Cannon(Building):
                     village.king.texture = macros.GRAVE_TILE
                     village.tiles[village.king.position[0]
                                   ][village.king.position[1]] = macros.EMPTY
+                    village.king.alive = False
 
         else:
             # shoot barb
