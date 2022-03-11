@@ -26,6 +26,10 @@ COORD_TOWN_HALL = (int(VILLAGE_HEIGHT/2), int(VILLAGE_WIDTH/2)-10)
 TOWN_HALL_HEALTH = 1000
 
 
+# troops and spells 
+CAMP_SIZE = 20 # at max 20 soldiers 
+HEAL_SPELL = 2
+RAGE_SPELL = 2
 # tile map code
 EMPTY = 0
 
