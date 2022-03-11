@@ -1,7 +1,7 @@
 # define the town hall class here
 
-from building import Building
-import globals as macros
+from objects.building import Building
+import objects.globals as macros
 
 
 class TownHall(Building):

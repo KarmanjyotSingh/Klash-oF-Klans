@@ -1,8 +1,8 @@
 # A king is a type of troop
-from troop import Troop
-import globals as macros
-from input import *
-from barbarians import Barabarian
+from objects.troop import Troop
+import objects.globals as macros
+from objects.input import *
+from objects.barbarians import Barabarian
 
 # define king as Troop , but control the king's position by the user
 # control king using wasd keys
@@ -23,8 +23,6 @@ class King(Troop):
     def moveKing(self, char, village):
 
         #  just to check health bar
-        if char == '1':
-            self.health -= int(1)
 
         if char == 'w':
 
@@ -62,7 +60,6 @@ class King(Troop):
                             break
                     self.position = (
                         self.position[0], self.position[1] - steps)
-
         elif char == 'd':
             if self.health > 0:
                 if self.position[1] < village.width - 1:
@@ -74,27 +71,35 @@ class King(Troop):
                             break
                     self.position = (
                         self.position[0], self.position[1] + steps)
-
         elif char == ' ':
             if self.health > 0:
                 self.attackKing(village)
-
         # defining 1 , 2, 3 as spawning points
         elif char == 'z':
-            village.barbarians.append(Barabarian(
-                village.spawningPoints[0][0], village.spawningPoints[0][1]))
+            if village.campsize < macros.CAMP_SIZE:
+                village.campsize += 1
+                village.barbarians.append(Barabarian(
+                    village.spawningPoints[0][0], village.spawningPoints[0][1]))
         elif char == 'x':
-            village.barbarians.append(Barabarian(
-                village.spawningPoints[1][0], village.spawningPoints[1][1]))
+            if village.campsize < macros.CAMP_SIZE:
+                village.campsize += 1
+                village.barbarians.append(Barabarian(
+                    village.spawningPoints[1][0], village.spawningPoints[1][1]))
         elif char == 'c':
-            village.barbarians.append(Barabarian(
-                village.spawningPoints[2][0], village.spawningPoints[2][1]))
+            if village.campsize < macros.CAMP_SIZE:
+                village.campsize += 1
+                village.barbarians.append(Barabarian(
+                    village.spawningPoints[2][0], village.spawningPoints[2][1]))
 
         elif char == 'r':
-            village.rage.doRage(village)
+            if village.rageSpell < macros.RAGE_SPELL:
+                village.rageSpell += 1
+                village.rage.doRage(village)
 
         elif char == 'h':
-            village.heal.doHeal(village)
+            if village.healSpell < macros.HEALTH_SPELL:
+                village.healSpell += 1
+                village.heal.doHeal(village)
 
     def attackKing(self, village):
         # axe vala attack , in radius of 5 tiles

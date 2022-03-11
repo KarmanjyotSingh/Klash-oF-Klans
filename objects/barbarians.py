@@ -1,5 +1,5 @@
-from troop import Troop
-import globals as macros
+from objects.troop import Troop
+import objects.globals as macros
 import math
 # define the barbarian class
 # inherit from the troop class

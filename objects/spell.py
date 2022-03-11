@@ -2,7 +2,7 @@ import enum
 
 
 from enum import Enum
-import globals as macros
+import objects.globals as macros
 
 
 class SpellType(Enum):

@@ -2,14 +2,14 @@ from colorama import Fore, Style, Back
 from os import system as sys
 import math
 from time import *
-import globals as macros
-from king import King
-from townhall import TownHall
-from hut import Hut
-from cannon import Cannon
-from wall import Wall
-from barbarians import Barabarian
-from spell import RageSpell, HealingSpell
+import objects.globals as macros
+from objects.king import King
+from objects.townhall import TownHall
+from objects.hut import Hut
+from objects.cannon import Cannon
+from objects.wall import Wall
+from objects.barbarians import Barabarian
+from objects.spell import RageSpell, HealingSpell
 
 from colorama import init
 
@@ -44,6 +44,9 @@ class Village():
         self.walls = []
         self.rage = RageSpell()
         self.heal = HealingSpell()
+        self.healSpell = 0
+        self.rageSpell = 0
+        self.campsize = 0
         for i in range(top, bottom+1):
             if self.coordWall.count((i, left, 1)) == 0:
                 self.coordWall.append((i, left, 1))
@@ -106,6 +109,22 @@ class Village():
 
         return False
 
+    def gameWon(self):
+        
+        for i in range(macros.DISPLAY_HEIGHT):
+            for j in range(macros.DISPLAY_WIDTH):
+                # render the game border
+                if j < self.width and (j == 0 or j == self.width-1 or i == 0 or i == self.height-1):
+                    self.village[i][j] = macros.BORDER_PIXEL
+                    self.tiles[i][j] = -1
+                else:
+                    # the main score card area
+                    if j >= self.width:
+                        self.village[i][j] = macros.SCORECARD_PIXEL
+                    else:
+                        # background pixel
+                        self.village[i][j] = macros.BACKGROUND_PIXEL
+
     def renderScoreBoard(self):
 
         king_health = self.king.health
@@ -122,7 +141,7 @@ class Village():
         for row in range(len(self.logo)):
             for col in range(len(self.logo[row])):
                 self.village[row+r][col+macros.VILLAGE_WIDTH +
-                                    2] = Back.BLUE  + self.logo[row][col] + Style.RESET_ALL
+                                    2] = Back.BLUE + self.logo[row][col] + Style.RESET_ALL
             r += 1
 
     def drawWalls(self):
