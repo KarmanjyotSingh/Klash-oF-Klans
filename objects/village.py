@@ -11,6 +11,8 @@ from wall import Wall
 from barbarians import Barabarian
 from spell import RageSpell, HealingSpell
 
+from colorama import init
+
 
 class Village():
 
@@ -93,6 +95,16 @@ class Village():
                 self.activeBuildings.append((i, j))
 
         self.barbarians = []
+        f = open('logo.txt', 'r')
+        self.logo = (''.join([line for line in f])).split('\n')
+
+    def isActive(self):
+
+        for coord in self.activeBuildings:
+            if self.village[coord[0]][coord[1]] != macros.BACKGROUND_PIXEL:
+                return True
+
+        return False
 
     def renderScoreBoard(self):
 
@@ -102,7 +114,16 @@ class Village():
                                          macros.DISPLAY_WIDTH))
 
         for i in range(display_health):
-            self.village[0][i] = Back.RED+ " " + Style.RESET_ALL
+            self.village[0][i] = Back.RED + " " + Style.RESET_ALL
+
+        # for i in range(macros.VILLAGE_WIDTH+2, macros.DISPLAY_WIDTH):
+        r = 5
+
+        for row in range(len(self.logo)):
+            for col in range(len(self.logo[row])):
+                self.village[row+r][col+macros.VILLAGE_WIDTH +
+                                    2] = Back.BLUE  + self.logo[row][col] + Style.RESET_ALL
+            r += 1
 
     def drawWalls(self):
         for i in self.walls:

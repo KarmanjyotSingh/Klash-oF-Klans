@@ -19,6 +19,8 @@ class Cannon(Building):
         return abs(self.position[0] - coord[0]) + abs(self.position[1] - coord[1])
 
     def find_target(self, village):
+        if self.health <= 0:
+            return
         # define a radius of tiles around the cannon ]
         # look for barbarian or the king object , choose the one which is nearest
         shoot = False
@@ -43,27 +45,46 @@ class Cannon(Building):
                 if mindist < dist:
                     dist = mindist
                     idx = -1
-        self.texture = macros.CANNON_SHOT if shoot else macros.CANNON
+        if shoot == True:
+            self.texture = macros.CANNON_SHOT
+        else:
+            health = float(self.health/macros.CANNON_HEALTH_POINTS)
+            if health > 0.5:
+                self.texture = macros.CANNON
+            elif health > 0.2:
+                self.texture = macros.midCannon
+            else:
+                self.texture = macros.CannonDead
+
+        if self.health <= 0:
+            self.texture = macros.BACKGROUND_PIXEL
+            self.tile = macros.EMPTY
         if shoot == True:
             self.shoot(village, idx)
         return shoot
 
     def shoot(self, village, idx):
+
+        if self.health <= 0:
+            return
         if idx == -1:
             # shoot the king
-            village.king.health -= self.damage
-            if village.king.health <= 0:
-                village.king.texture = macros.GRAVE_TILE
-                village.tiles[village.king.position[0]
-                             ][village.king.position[1]] = macros.EMPTY
+            print("SHOOTING THE KING", village.king.health)
+            if village.king.health > 0:
+                village.king.health -= self.damage
+                if village.king.health <= 0:
+                    village.king.texture = macros.GRAVE_TILE
+                    village.tiles[village.king.position[0]
+                                  ][village.king.position[1]] = macros.EMPTY
 
         else:
             # shoot barb
             if idx >= 0:
-                # check 
-                village.barbarians[idx].health -= self.damage
-                if village.barbarians[idx].health <= 0:
-                    village.barbarians[idx].texture = macros.GRAVE_TILE
-                    village.tiles[village.barbarians[idx].position[0]
-                                 ][village.barbarians[idx].position[1]] = macros.EMPTY
-
+                # check
+                if village.barbarians[idx].health > 0:
+                    village.barbarians[idx].health -= self.damage
+                    if village.barbarians[idx].health <= 0:
+                        village.barbarians[idx].texture = macros.GRAVE_TILE
+                        village.barbarians[idx].alive = False
+                        village.tiles[village.barbarians[idx].position[0]
+                                      ][village.barbarians[idx].position[1]] = macros.EMPTY

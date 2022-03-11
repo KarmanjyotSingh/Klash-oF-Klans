@@ -29,8 +29,8 @@ class Barabarian(Troop):
 
     def move_barbarian(self, village):
         # set the game boundary variables
-        print(self.position)
-        print(village.tiles[self.position[0]][self.position[1]-1])
+        # print(self.position)
+        # print(village.tiles[self.position[0]][self.position[1]-1])
         if self.health <= 0:
             return
         top = 1
