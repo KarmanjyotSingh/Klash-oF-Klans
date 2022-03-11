@@ -23,4 +23,18 @@
    1. Replay feature has been implemented 
 6. Impressive UI and Design of the game!!
 
-Enjoy !
+Enjoy !!!!!!
+
+#### main game
+<img src ="images/maingame.png" alt ="game">
+
+#### troops on attack
+
+<img src ="images/barbs.png" alt ="barbs">
+
+#### game won
+
+<img src ="images/gamewon.png" alt ="won">
+
+#### game lost
+<img src ="images/gamelost.png" alt ="lost">
