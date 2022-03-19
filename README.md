@@ -26,15 +26,15 @@
 Enjoy !!!!!!
 
 #### main game
-<img src ="images/maingame.png" alt ="game">
+<img src ="src/images/maingame.png" alt ="game">
 
 #### troops on attack
 
-<img src ="images/barbs.png" alt ="barbs">
+<img src ="src/images/barbs.png" alt ="barbs">
 
 #### game won
 
-<img src ="images/gamewon.png" alt ="won">
+<img src ="src/images/gamewon.png" alt ="won">
 
 #### game lost
-<img src ="images/gamelost.png" alt ="lost">
+<img src ="src/images/gamelost.png" alt ="lost">

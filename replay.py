@@ -1,11 +1,14 @@
-from objects.village import Village
-from objects.globals import * 
+from src.village import Village
+from src.globals import *
 
 import time
-f = open('numreplay.txt', 'r')
+f = open('src/numreplay.txt', 'r')
 num = int(f.read())
-print(num)
-# sys.path.insert(0, './objects')
+if num == 0:
+    print("No replays !!!")
+    exit()
+# print(num)
+# sys.path.insert(0, './src')
 
 timeout = 0.9
 for replay in range(1, num+1):

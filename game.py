@@ -1,3 +1,3 @@
-from objects.main import Run
+from src.main import Run
 
 Run()
