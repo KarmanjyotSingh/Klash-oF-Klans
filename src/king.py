@@ -71,6 +71,7 @@ class King(Troop):
         elif char == ' ':
             if self.health > 0:
                 self.attackKing(village)
+
         # defining 1 , 2, 3 as spawning points
         elif char == 'z':
             if village.campsize < macros.CAMP_SIZE:
@@ -97,7 +98,7 @@ class King(Troop):
             if village.healSpell < macros.HEAL_SPELL:
                 village.healSpell += 1
                 village.heal.doHeal(village)
-
+        
     def attackKing(self, village):
         # axe vala attack , in radius of 5 tiles
         x = int(self.position[0])
@@ -144,6 +145,15 @@ class King(Troop):
                                 if (village.cannons[idx].position[0], village.cannons[idx].position[1]) in village.activeBuildings:
                                     village.cannons[idx].active = False
 
+                    if (i, j) in village.coordWizard:
+                        idx = village.coordWizard.index((i, j))
+                        if village.wizardTower[idx].health > 0 and village.wizardTower[idx].active == True:
+                            village.wizardTower[idx].health -= self.damage
+                            if village.wizardTower[idx].health <= 0:
+                                village.wizardTower[idx].texture = macros.BACKGROUND_PIXEL
+                                village.wizardTower[idx].tile = macros.EMPTY
+                                if (village.wizardTower[idx].position[0], village.wizardTower[idx].position[1]) in village.activeBuildings:
+                                    village.wizardTower[idx].active = False
                     # check for walls
                     for itr in range(0, len(village.coordWall)):
                         if i == village.coordWall[itr][0] and j == village.coordWall[itr][1]:
