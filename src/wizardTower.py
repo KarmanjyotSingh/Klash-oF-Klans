@@ -20,8 +20,6 @@ class WizardTower(Building):
         return abs(coord1[0]-coord2[0]) + abs(coord1[1]-coord2[1])
 
     def find_target(self, village):
-
-        # look the closest enemy ig ?
         position = (-1, -1)
         if self.health <= 0:
             self.active = False
@@ -57,7 +55,6 @@ class WizardTower(Building):
                     if dist < mindist:
                         mindist = dist
                         position = barb.position
-                        itr = barb.id
                         idx = 0
         # check over the archers
         for archer in village.archers:
@@ -68,7 +65,6 @@ class WizardTower(Building):
                     if dist < mindist:
                         mindist = dist
                         position = archer.position
-                        itr = archer.id
                         idx = 1
 
         # check over the balloons
@@ -80,7 +76,6 @@ class WizardTower(Building):
                     if dist < mindist:
                         position = balloon.position
                         mindist = dist
-                        itr = balloon.id
                         idx = 2
 
         if shoot == True:
@@ -93,7 +88,7 @@ class WizardTower(Building):
                 self.texture = macros.WIZARD_HEALTH_25
             else:
                 self.texture = macros.WIZARD_HEALTH_50
-                
+
         if shoot == True:
             self.shoot(village, position)
         return shoot
@@ -105,7 +100,7 @@ class WizardTower(Building):
         # look over the barbarians
         for barb in village.barbarians:
             if barb.health > 0:
-                if self.enemy_distance(position, barb.position) <= 2:
+                if abs(position[0]-barb.position[0])+abs(position[1]-barb.position[1]) <= 2:
                     barb.health -= self.damage
                     if barb.health <= 0:
                         barb.alive = False
@@ -115,7 +110,7 @@ class WizardTower(Building):
         #  look over the archers
         for archer in village.archers:
             if archer.health > 0:
-                if self.enemy_distance(position, archer.position) <= 2:
+                if abs(position[0]-archer.position[0])+abs(position[1]-archer.position[1]) <= 2:
                     archer.health -= self.damage
                     if archer.health <= 0:
                         archer.alive = False
@@ -124,7 +119,7 @@ class WizardTower(Building):
                                       ][archer.position[1]] = macros.EMPTY
         for balloon in village.balloons:
             if balloon.health > 0:
-                if self.enemy_distance(position, balloon.position) <= 2:
+                if abs(position[0]-balloon.position[0])+abs(position[1]-balloon.position[1]) <= 2:
                     balloon.health -= self.damage
                     if balloon.health <= 0:
                         balloon.alive = False
@@ -133,7 +128,11 @@ class WizardTower(Building):
                                       ][balloon.position[1]] = macros.EMPTY
         if village.troop == "KING":
             if village.king.health > 0:
-                if self.enemy_distance(village.king.position, position) <= 2:
+                print("ERRRRR")
+                print(position[0])
+                print(position[1])
+                print("EERRR")
+                if abs(position[0]-village.king.position[0])+abs(position[1]-village.king.position[1]) <= 2:
                     village.king.health -= self.damage
                     if village.king.health <= 0:
                         village.king.alive = False
@@ -142,7 +141,7 @@ class WizardTower(Building):
                                       ][village.king.position[1]] = macros.EMPTY
         else:
             if village.queen.health > 0:
-                if self.enemy_distance(village.queen.position, position) <= 2:
+                if abs(position[0]-village.queen.position[0])+abs(position[1]-village.queen.position[1]) <= 2:
                     village.queen.health -= self.damage
                     if village.queen.health <= 0:
                         village.queen.alive = False
