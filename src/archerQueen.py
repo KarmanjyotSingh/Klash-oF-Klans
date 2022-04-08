@@ -105,7 +105,7 @@ class Queen(Troop):
                                     continue
                                 else:
                                     attack_coord.append((i, j))
-                elif tile == macros.HUT or tile == macros.WIZARD_TILE or tile == macros.CANNON_TILE or tile == macros.TILE_WALL_LEVEL_1 or tile == macros.TILE_WALL_LEVEL_2 or tile == macros.TILE_WALL_LEVEL_3:
+                elif tile == macros.HUT_TILE or tile == macros.WIZARD_TILE or tile == macros.CANNON_TILE or tile == macros.TILE_WALL_LEVEL_1 or tile == macros.TILE_WALL_LEVEL_2 or tile == macros.TILE_WALL_LEVEL_3:
                     top = coord - AOE  # attack the townhall and the nearby defense area thingys
                     bottom = coord + AOE+1
                     left = self.position[1] - AOE
@@ -159,7 +159,7 @@ class Queen(Troop):
                                     continue
                                 else:
                                     attack_coord.append((i, j))
-                elif tile == macros.HUT or tile == macros.WIZARD_TILE or tile == macros.CANNON_TILE or tile == macros.TILE_WALL_LEVEL_1 or tile == macros.TILE_WALL_LEVEL_2 or tile == macros.TILE_WALL_LEVEL_3:
+                elif tile == macros.HUT_TILE or tile == macros.WIZARD_TILE or tile == macros.CANNON_TILE or tile == macros.TILE_WALL_LEVEL_1 or tile == macros.TILE_WALL_LEVEL_2 or tile == macros.TILE_WALL_LEVEL_3:
                     top = coord - AOE
                     bottom = coord + AOE+1
                     left = self.position[1] - AOE
@@ -211,7 +211,7 @@ class Queen(Troop):
                                     continue
                                 else:
                                     attack_coord.append((i, j))
-                elif tile == macros.HUT or tile == macros.WIZARD_TILE or tile == macros.CANNON_TILE or tile == macros.TILE_WALL_LEVEL_1 or tile == macros.TILE_WALL_LEVEL_2 or tile == macros.TILE_WALL_LEVEL_3:
+                elif tile == macros.HUT_TILE or tile == macros.WIZARD_TILE or tile == macros.CANNON_TILE or tile == macros.TILE_WALL_LEVEL_1 or tile == macros.TILE_WALL_LEVEL_2 or tile == macros.TILE_WALL_LEVEL_3:
                     top = self.position[0] - AOE
                     bottom = self.position[0] + AOE+1
                     left = coord - AOE
@@ -264,7 +264,7 @@ class Queen(Troop):
                                     continue
                                 else:
                                     attack_coord.append((i, j))
-                elif tile == macros.HUT or tile == macros.WIZARD_TILE or tile == macros.CANNON_TILE or tile == macros.TILE_WALL_LEVEL_1 or tile == macros.TILE_WALL_LEVEL_2 or tile == macros.TILE_WALL_LEVEL_3:
+                elif tile == macros.HUT_TILE or tile == macros.WIZARD_TILE or tile == macros.CANNON_TILE or tile == macros.TILE_WALL_LEVEL_1 or tile == macros.TILE_WALL_LEVEL_2 or tile == macros.TILE_WALL_LEVEL_3:
                     # print("TILE IS", tile)
                     top = self.position[0] - AOE
                     bottom = self.position[0] + AOE+1
