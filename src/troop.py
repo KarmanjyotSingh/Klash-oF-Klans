@@ -2,15 +2,15 @@
 
 class Troop():
 
-    def __init__(self, x, y, dimensions=(1, 1), health=50, damage=10 , speed = 1):
+    def __init__(self, x, y, health, damage, speed):
 
         # specify the position of the troop
         # the position at which the troop is spawn
 
         self.position = (x, y)
         # set the dimensions of the troop
-        self.width = dimensions[0]
-        self.height = dimensions[1]
+        self.width = 1
+        self.height = 1
         # boolean expression for alive
         self.alive = True
         # health for the troop

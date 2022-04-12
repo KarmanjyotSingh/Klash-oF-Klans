@@ -2,6 +2,73 @@ from src.village import Village
 from src.input import *
 import src.globals as macros
 import src.levels as levels
+from src.barbarians import Barabarian
+from src.balloon import Balloon
+from src.archer import Archer
+
+
+def handle_input(char, village):
+    # defining 1 , 2, 3 as spawning points
+    if char == 'z':
+        # if village.campsize < macros.CAMP_SIZE:
+        village.campsize += 1
+        village.barbarians.append(Barabarian(
+            village.spawningPoints[0][0], village.spawningPoints[0][1]))
+    elif char == 'x':
+        if village.campsize < macros.CAMP_SIZE:
+            village.campsize += 1
+            village.barbarians.append(Barabarian(
+                village.spawningPoints[1][0], village.spawningPoints[1][1]))
+    elif char == 'c':
+        if village.campsize < macros.CAMP_SIZE:
+            village.campsize += 1
+            village.barbarians.append(Barabarian(
+                village.spawningPoints[2][0], village.spawningPoints[2][1]))
+    elif char == 'r':
+        if village.rageSpell < macros.RAGE_SPELL:
+            village.rageSpell += 1
+            village.rage.doRage(village)
+    elif char == 'h':
+        if village.healSpell < macros.HEAL_SPELL:
+            village.healSpell += 1
+            village.heal.doHeal(village)
+    elif char == '1':
+        #  spawn balloon
+        if village.ball > 0:
+            village.ball -= 1
+            village.balloons.append(Balloon(village.spawningPoints[0][0], village.spawningPoints[0]
+                                    [1], macros.BALLOON_HEALTH, macros.BALLOON_DAMAGE, macros.BALLOON_MOVEMENT_SPEED))
+    elif char == '2':
+        #  spawn balloon
+        if village.ball > 0:
+            village.ball -= 1
+            village.balloons.append(Balloon(
+                village.spawningPoints[1][0], village.spawningPoints[1][1], macros.BALLOON_HEALTH, macros.BALLOON_DAMAGE, macros.BALLOON_MOVEMENT_SPEED))
+
+    elif char == '3':
+
+        #  spawn balloon
+        if village.ball > 0:
+            village.ball -= 1
+            village.balloons.append(Balloon(village.spawningPoints[2][0], village.spawningPoints[2]
+                                    [1], macros.BALLOON_HEALTH, macros.BALLOON_DAMAGE, macros.BALLOON_MOVEMENT_SPEED))
+
+    elif char == '4':
+        if village.archs > 0:
+            village.archs -= 1
+            village.archers.append(
+                Archer(village.spawningPoints[0][0], village.spawningPoints[0][1]))
+
+    elif char == '5':
+        if village.archs > 0:
+            village.archs -= 1
+            village.archers.append(
+                Archer(village.spawningPoints[1][0], village.spawningPoints[1][1]))
+    elif char == '6':
+        if village.archs > 0:
+            village.archs -= 1
+            village.archers.append(
+                Archer(village.spawningPoints[2][0], village.spawningPoints[2][1]))
 
 
 def Run(choice):
@@ -19,9 +86,9 @@ def Run(choice):
 
         ch = input_to(Get().__call__)
         inputArr.append(ch)
+        handle_input(ch, village)
         if choice == 1:
             village.king.moveKing(ch, village)
-
         else:
             village.queen.moveQueen(ch, village)
         if ch == 'q':
@@ -40,7 +107,10 @@ def Run(choice):
             village.moveBarbs()
             village.shootCannon()
             village.shootWizard()
+            village.moveBall()
+            village.moveArcher()
             ret = village.isActive()
+            # print(ret)
             if ret == False:
                 if village.level == 1:
                     village = Village(2, choice)
@@ -65,11 +135,16 @@ def Run(choice):
 
                 for barbs in village.barbarians:
                     flag = barbs.alive
+                for archs in village.archers:
+                    flag = archs.alive
+                for ball in village.balloons:
+                    flag = ball.alive
+
                 troopFlag = False
-                if choice == 1 : 
+                if choice == 1:
                     troopFlag = village.king.alive
                 else:
                     troopFlag = village.queen.alive
-                if flag == False and village.campsize == 20 and troopFlag == False:
+                if flag == False and village.barbs == 0 and village.archs == 0 and village.ball == 0 and troopFlag == False:
                     village.gameLost()
                     break

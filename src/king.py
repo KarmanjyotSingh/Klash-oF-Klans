@@ -3,6 +3,7 @@ from src.troop import Troop
 import src.globals as macros
 from src.input import *
 from src.barbarians import Barabarian
+from src.balloon import Balloon
 
 # define king as Troop , but control the king's position by the user
 # control king using wasd keys
@@ -14,11 +15,9 @@ attackRadius = 5
 class King(Troop):
 
     def __init__(self, x, y):
-        super().__init__(x, y)
+        super().__init__(x, y, macros.KING_HEALTH_POINTS,
+                         macros.KING_DAMAGE, macros.KING_MOVEMENT_SPEED)
         self.troop_type = macros.KING
-        self.health = macros.KING_HEALTH_POINTS
-        self.damage = macros.KING_DAMAGE
-        self.movement_speed = macros.KING_MOVEMENT_SPEED
 
     def moveKing(self, char, village):
         #  just to check health bar
@@ -72,33 +71,6 @@ class King(Troop):
             if self.health > 0:
                 self.attackKing(village)
 
-        # defining 1 , 2, 3 as spawning points
-        elif char == 'z':
-            if village.campsize < macros.CAMP_SIZE:
-                village.campsize += 1
-                village.barbarians.append(Barabarian(
-                    village.spawningPoints[0][0], village.spawningPoints[0][1]))
-        elif char == 'x':
-            if village.campsize < macros.CAMP_SIZE:
-                village.campsize += 1
-                village.barbarians.append(Barabarian(
-                    village.spawningPoints[1][0], village.spawningPoints[1][1]))
-        elif char == 'c':
-            if village.campsize < macros.CAMP_SIZE:
-                village.campsize += 1
-                village.barbarians.append(Barabarian(
-                    village.spawningPoints[2][0], village.spawningPoints[2][1]))
-
-        elif char == 'r':
-            if village.rageSpell < macros.RAGE_SPELL:
-                village.rageSpell += 1
-                village.rage.doRage(village)
-
-        elif char == 'h':
-            if village.healSpell < macros.HEAL_SPELL:
-                village.healSpell += 1
-                village.heal.doHeal(village)
-        
     def attackKing(self, village):
         # axe vala attack , in radius of 5 tiles
         x = int(self.position[0])

@@ -8,9 +8,9 @@ import math
 
 class Barabarian(Troop):
 
-    def __init__(self, x, y, health=macros.BARBARIAN_HEALTH_POINTS, damage=5, speed=macros.BARBARIAN_MOVEMENT_SPEED):
+    def __init__(self, x, y, health=macros.BARBARIAN_HEALTH_POINTS, damage=macros.BARBARIAN_DAMAGE, speed=macros.BARBARIAN_MOVEMENT_SPEED):
 
-        super().__init__(x, y, (1, 1), health, damage, speed)
+        super().__init__(x, y, health, damage, speed)
         self.troop_type = macros.BARBARIAN
         self.texture = macros.BARBARIAN_TILE
         self.tile = macros.BARB
@@ -54,7 +54,6 @@ class Barabarian(Troop):
                 building = coordinate
         # just add the barbarian to the screen , meaning game won
         if building == (-1, -1):
-
             return True
         # got the building make the barbarian move towards it
 
@@ -70,7 +69,6 @@ class Barabarian(Troop):
 
         direction = (direction[0] - self.position[0],
                      direction[1] - self.position[1])
-
         if direction[1] == 0:
             # print("1")
             # it is in same vertical level
@@ -84,7 +82,7 @@ class Barabarian(Troop):
                     else:
                         attack = True
                         break
-                if self.position[0] + i < bottom and self.position[0] + steps > bottom:
+                if self.position[0] + steps > bottom:
                     village.tiles[self.position[0]
                                   ][self.position[1]] = macros.EMPTY
                     self.set_position(bottom, self.position[1])
@@ -110,7 +108,7 @@ class Barabarian(Troop):
                 prev = self.position[0]
                 if attack == True:
                     # print(building)
-                    
+
                     self.attackBarbarian(
                         village, (prev + 1, self.position[1]))
             elif direction[0] < 0:
@@ -154,7 +152,6 @@ class Barabarian(Troop):
                         village, (prev - 1, self.position[1]))
             elif direction[0] == 0:
                 self.attackBarbarian(village, building)
-
         elif direction[1] > 0:
             # move right
             # print("2    ")
@@ -184,7 +181,6 @@ class Barabarian(Troop):
                 # print(building)
                 self.attackBarbarian(
                     village, (self.position[0], prev+1))
-
         else:
           # move left
             # print("3")
@@ -246,7 +242,7 @@ class Barabarian(Troop):
 
         elif objtype == macros.CANNON_TILE:
             idx = village.coordCannon.index(coord)
-            if village.cannons[idx].active == True and village.cannons[idx].health > 0:
+            if idx >= 0 and village.cannons[idx].active == True and village.cannons[idx].health > 0:
                 village.cannons[idx].health -= self.damage
                 if village.cannons[idx].health <= 0:
                     village.cannons[idx].texture = macros.BACKGROUND_PIXEL
@@ -257,6 +253,18 @@ class Barabarian(Troop):
                                               ] = macros.BACKGROUND_PIXEL
                     village.tiles[coord[0]][coord[1]] = macros.EMPTY
 
+        elif objtype == macros.WIZARD_TILE:
+            idx = village.coordWizard.index(coord)
+            if village.wizardTower[idx].active == True and village.wizardTower[idx].health > 0:
+                village.wizardTower[idx].health -= self.damage
+                if village.wizardTower[idx].health <= 0:
+                    village.wizardTower[idx].texture = macros.BACKGROUND_PIXEL
+                    village.wizardTower[idx].tile = macros.EMPTY
+                    village.wizardTower[idx].active = False
+                    # village.activeBuildings.remove(coord)
+                    village.village[coord[0]][coord[1]
+                                              ] = macros.BACKGROUND_PIXEL
+                    village.tiles[coord[0]][coord[1]] = macros.EMPTY
         else:  # wall object perhaps
             level = 1
             if village.tiles[coord[0]][coord[1]] == macros.TILE_WALL_LEVEL_2:
