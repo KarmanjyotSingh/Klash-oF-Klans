@@ -9,11 +9,9 @@ from colorama import Fore, Style, Back
 class Queen(Troop):
 
     def __init__(self, x, y):
-        super().__init__(x, y)
+        super().__init__(x, y, macros.QUEEN_HEALTH_POINTS,
+                         macros.QUEEN_DAMAGE, macros.QUEEN_MOVEMENT_SPEED)
         self.troop_type = macros.QUEEN
-        self.health = macros.QUEEN_HEALTH_POINTS
-        self.damage = macros.QUEEN_DAMAGE
-        self.movement_speed = macros.QUEEN_MOVEMENT_SPEED
         self.AoE = 5
         self.attack_distance = 8
         self.move_direction = ""
@@ -76,221 +74,119 @@ class Queen(Troop):
         # find the nearest building in the move direction4
         attack_coord = []
         AOE = int(self.AoE/2)
+
         if self.move_direction == 'w':
             curr_y = self.position[0]
             if curr_y - self.attack_distance < 1:
                 return
             else:
                 coord = curr_y - self.attack_distance
-                tile = village.tiles[coord][self.position[1]]
-                if tile == macros.TOWN_HALL:
-                    # attack the townhall and destroy the nearby area of effect
-                    if village.townhall.health > 0:
-                        attack_coord.append((coord, self.position[1]))
-                        top = coord - AOE
-                        bottom = coord + AOE+1
-                        left = self.position[1] - AOE
-                        right = self.position[1] + AOE+1
-                        if top < 1:
-                            top = 1
-                        if bottom >= village.height - 1:
-                            bottom = village.height - 2
-                        if left < 1:
-                            left = 1
-                        if right >= village.width - 1:
-                            right = village.width - 2
-                        for i in range(top, bottom):
-                            for j in range(left, right):
-                                if village.tiles[i][j] == macros.EMPTY or village.tiles[i][j] == macros.TOWN_HALL or village.tiles[i][j] == macros.ARCH or village.tiles[i][j] == macros.BARB or village.tiles[i][j] == macros.BALLOON:
-                                    continue
-                                else:
-                                    attack_coord.append((i, j))
-                elif tile == macros.HUT_TILE or tile == macros.WIZARD_TILE or tile == macros.CANNON_TILE or tile == macros.TILE_WALL_LEVEL_1 or tile == macros.TILE_WALL_LEVEL_2 or tile == macros.TILE_WALL_LEVEL_3:
-                    top = coord - AOE  # attack the townhall and the nearby defense area thingys
-                    bottom = coord + AOE+1
-                    left = self.position[1] - AOE
-                    right = self.position[1] + AOE+1
 
-                    if top < 1:
-                        top = 1
-                    if bottom >= village.height - 1:
-                        bottom = village.height - 2
-                    if left <= 1:
-                        left = 1
-                    if right >= village.width - 1:
-                        right = village.width - 2
-                    TH = False
-                    for i in range(top, bottom):
-                        for j in range(left, right):
-                            if village.tiles[i][j] == macros.TOWN_HALL and TH == False:
-                                TH = True
-                                attack_coord.append((i, j))
-                            elif village.tiles[i][j] == macros.EMPTY or village.tiles[i][j] == macros.ARCH or village.tiles[i][j] == macros.BARB or village.tiles[i][j] == macros.BALLOON:
-                                continue
-                            else:
-                                attack_coord.append((i, j))
-                else:
-                    return
+                top = coord - AOE  # attack the townhall and the nearby defense area thingys
+                bottom = coord + AOE+1
+                left = self.position[1] - AOE
+                right = self.position[1] + AOE+1
+
+                if top < 1:
+                    top = 1
+                if bottom >= village.height - 1:
+                    bottom = village.height - 2
+                if left <= 1:
+                    left = 1
+                if right >= village.width - 1:
+                    right = village.width - 2
+                TH = False
+                for i in range(top, bottom):
+                    for j in range(left, right):
+                        if village.tiles[i][j] == macros.TOWN_HALL and TH == False:
+                            TH = True
+                            attack_coord.append((i, j))
+                        elif village.tiles[i][j] == macros.EMPTY or village.tiles[i][j] == macros.ARCH or village.tiles[i][j] == macros.BARB or village.tiles[i][j] == macros.BALLOON:
+                            continue
+                        else:
+                            attack_coord.append((i, j))
         elif self.move_direction == 's':
             coord = self.position[0] + self.attack_distance
             if coord >= village.height - 1:
                 return
             else:
-                tile = village.tiles[coord][self.position[1]]
-                if tile == macros.TOWN_HALL:
-                    # attack the townhall and destroy the nearby area of effect
-                    if village.townhall.health > 0:
-                        attack_coord.append((coord, self.position[1]))
-                        top = coord - AOE
-                        bottom = coord + AOE+1
-                        left = self.position[1] - AOE
-                        right = self.position[1] + AOE+1
-                        if top < 1:
-                            top = 1
-                        if bottom >= village.height - 1:
-                            bottom = village.height - 2
-                        if left < 1:
-                            left = 1
-                        if right >= village.width - 1:
-                            right = village.width - 2
-                        for i in range(top, bottom):
-                            for j in range(left, right):
-                                if village.tiles[i][j] == macros.EMPTY or village.tiles[i][j] == macros.TOWN_HALL or village.tiles[i][j] == macros.ARCH or village.tiles[i][j] == macros.BARB or village.tiles[i][j] == macros.BALLOON:
-                                    continue
-                                else:
-                                    attack_coord.append((i, j))
-                elif tile == macros.HUT_TILE or tile == macros.WIZARD_TILE or tile == macros.CANNON_TILE or tile == macros.TILE_WALL_LEVEL_1 or tile == macros.TILE_WALL_LEVEL_2 or tile == macros.TILE_WALL_LEVEL_3:
-                    top = coord - AOE
-                    bottom = coord + AOE+1
-                    left = self.position[1] - AOE
-                    right = self.position[1] + AOE+1
-                    if top < 1:
-                        top = 1
-                    if bottom >= village.height - 1:
-                        bottom = village.height - 2
-                    if left < 1:
-                        left = 1
-                    if right >= village.width - 1:
-                        right = village.width - 2
-                    TH = False
-                    for i in range(top, bottom):
-                        for j in range(left, right):
-                            if village.tiles[i][j] == macros.TOWN_HALL and TH == False:
-                                TH = True
-                                attack_coord.append((i, j))
-                            elif village.tiles[i][j] == macros.EMPTY or village.tiles[i][j] == macros.ARCH or village.tiles[i][j] == macros.BARB or village.tiles[i][j] == macros.BALLOON:
-                                continue
-                            else:
-                                attack_coord.append((i, j))
+                top = coord - AOE
+                bottom = coord + AOE+1
+                left = self.position[1] - AOE
+                right = self.position[1] + AOE+1
+                if top < 1:
+                    top = 1
+                if bottom >= village.height - 1:
+                    bottom = village.height - 2
+                if left < 1:
+                    left = 1
+                if right >= village.width - 1:
+                    right = village.width - 2
+                TH = False
+                for i in range(top, bottom):
+                    for j in range(left, right):
+                        if village.tiles[i][j] == macros.TOWN_HALL and TH == False:
+                            TH = True
+                            attack_coord.append((i, j))
+                        elif village.tiles[i][j] == macros.EMPTY or village.tiles[i][j] == macros.ARCH or village.tiles[i][j] == macros.BARB or village.tiles[i][j] == macros.BALLOON:
+                            continue
+                        else:
+                            attack_coord.append((i, j))
         elif self.move_direction == 'a':
             coord = self.position[1] - self.attack_distance
             if coord < 1:
                 return
             else:
-                tile = village.tiles[self.position[0]][coord]
-
-                if tile == macros.TOWN_HALL:
-                    # attack the townhall and destroy the nearby area of effect
-                    if village.townhall.health > 0:
-                        attack_coord.append((self.position[0], coord))
-                        top = self.position[0] - AOE
-                        bottom = self.position[0] + AOE+1
-                        left = coord - AOE
-                        right = coord + AOE+1
-                        if top < 1:
-                            top = 1
-                        if bottom >= village.height - 1:
-                            bottom = village.height - 2
-                        if left < 1:
-                            left = 1
-                        if right >= village.width - 1:
-                            right = village.width - 2
-                        for i in range(top, bottom):
-                            for j in range(left, right):
-                                if village.tiles[i][j] == macros.EMPTY or village.tiles[i][j] == macros.TOWN_HALL or village.tiles[i][j] == macros.ARCH or village.tiles[i][j] == macros.BARB or village.tiles[i][j] == macros.BALLOON:
-                                    continue
-                                else:
-                                    attack_coord.append((i, j))
-                elif tile == macros.HUT_TILE or tile == macros.WIZARD_TILE or tile == macros.CANNON_TILE or tile == macros.TILE_WALL_LEVEL_1 or tile == macros.TILE_WALL_LEVEL_2 or tile == macros.TILE_WALL_LEVEL_3:
-                    top = self.position[0] - AOE
-                    bottom = self.position[0] + AOE+1
-                    left = coord - AOE
-                    right = coord + AOE+1
-                    if top < 1:
-                        top = 1
-                    if bottom >= village.height - 1:
-                        bottom = village.height - 2
-                    if left < 1:
-                        left = 1
-                    if right >= village.width - 1:
-                        right = village.width - 2
-                    TH = False
-                    for i in range(top, bottom):
-                        for j in range(left, right):
-                            if village.tiles[i][j] == macros.TOWN_HALL and TH == False:
-                                TH = True
-                                attack_coord.append((i, j))
-                            elif village.tiles[i][j] == macros.EMPTY or village.tiles[i][j] == macros.ARCH or village.tiles[i][j] == macros.BARB or village.tiles[i][j] == macros.BALLOON:
-                                continue
-                            else:
-                                attack_coord.append((i, j))
+                top = self.position[0] - AOE
+                bottom = self.position[0] + AOE+1
+                left = coord - AOE
+                right = coord + AOE+1
+                if top < 1:
+                    top = 1
+                if bottom >= village.height - 1:
+                    bottom = village.height - 2
+                if left < 1:
+                    left = 1
+                if right >= village.width - 1:
+                    right = village.width - 2
+                TH = False
+                for i in range(top, bottom):
+                    for j in range(left, right):
+                        if village.tiles[i][j] == macros.TOWN_HALL and TH == False:
+                            TH = True
+                            attack_coord.append((i, j))
+                        elif village.tiles[i][j] == macros.EMPTY or village.tiles[i][j] == macros.ARCH or village.tiles[i][j] == macros.BARB or village.tiles[i][j] == macros.BALLOON:
+                            continue
+                        else:
+                            attack_coord.append((i, j))
         elif self.move_direction == 'd':
             coord = self.position[1]+self.attack_distance
             if coord >= village.width - 1:
                 return
             else:
-                tile = village.tiles[self.position[0]][coord]
-                # print(tile) # print(tile)
+                top = self.position[0] - AOE
+                bottom = self.position[0] + AOE+1
+                left = coord - AOE
+                right = coord + AOE+1
+                if top < 1:
+                    top = 1
+                if bottom >= village.height - 1:
+                    bottom = village.height - 2
+                if left < 1:
+                    left = 1
+                if right >= village.width - 1:
+                    right = village.width - 2
+                TH = False
 
-                if tile == macros.TOWN_HALL:
-                    # attack the townhall and destroy the nearby area of effect
-                    if village.townhall.health > 0:
-                        attack_coord.append((self.position[0], coord))
-                        top = self.position[0] - AOE
-                        bottom = self.position[0] + AOE+1
-                        left = coord - AOE
-                        right = coord + AOE+1
-                        if top < 1:
-                            top = 1
-                        if bottom >= village.height - 1:
-                            bottom = village.height - 2
-                        if left < 1:
-                            left = 1
-                        if right >= village.width - 1:
-                            right = village.width - 2
-                        for i in range(top, bottom):
-                            for j in range(left, right):
-                                if village.tiles[i][j] == macros.EMPTY or village.tiles[i][j] == macros.TOWN_HALL or village.tiles[i][j] == macros.ARCH or village.tiles[i][j] == macros.BARB or village.tiles[i][j] == macros.BALLOON:
-                                    continue
-                                else:
-                                    attack_coord.append((i, j))
-                elif tile == macros.HUT_TILE or tile == macros.WIZARD_TILE or tile == macros.CANNON_TILE or tile == macros.TILE_WALL_LEVEL_1 or tile == macros.TILE_WALL_LEVEL_2 or tile == macros.TILE_WALL_LEVEL_3:
-                    # print("TILE IS", tile)
-                    top = self.position[0] - AOE
-                    bottom = self.position[0] + AOE+1
-                    left = coord - AOE
-                    right = coord + AOE+1
-                    if top < 1:
-                        top = 1
-                    if bottom >= village.height - 1:
-                        bottom = village.height - 2
-                    if left < 1:
-                        left = 1
-                    if right >= village.width - 1:
-                        right = village.width - 2
-                    TH = False
-                  
-                    for i in range(top, bottom):
-                        for j in range(left, right):
-                            if village.tiles[i][j] == macros.TOWN_HALL and TH == False:
-                                TH = True
-                                attack_coord.append((i, j))
-                            elif village.tiles[i][j] == macros.EMPTY or village.tiles[i][j] == macros.ARCH or village.tiles[i][j] == macros.BARB or village.tiles[i][j] == macros.BALLOON:
-                                continue
-                            else:
-                                attack_coord.append((i, j))
-
-               
+                for i in range(top, bottom):
+                    for j in range(left, right):
+                        if village.tiles[i][j] == macros.TOWN_HALL and TH == False:
+                            TH = True
+                            attack_coord.append((i, j))
+                        elif village.tiles[i][j] == macros.EMPTY or village.tiles[i][j] == macros.ARCH or village.tiles[i][j] == macros.BARB or village.tiles[i][j] == macros.BALLOON:
+                            continue
+                        else:
+                            attack_coord.append((i, j))
 
         for coord in attack_coord:
             if village.tiles[coord[0]][coord[1]] == macros.TOWN_HALL:
@@ -331,6 +227,7 @@ class Queen(Troop):
                         village.cannons[itr].active = False
                         village.cannons[itr].texture = macros.BACKGROUND_PIXEL
                         village.cannons[itr].tile = macros.EMPTY
+           
             if village.tiles[coord[0]][coord[1]] == macros.TILE_WALL_LEVEL_1 or village.tiles[coord[0]][coord[1]] == macros.TILE_WALL_LEVEL_2 or village.tiles[coord[0]][coord[1]] == macros.TILE_WALL_LEVEL_3:
                 level = 1
                 if village.tiles[coord[0]][coord[1]] == macros.TILE_WALL_LEVEL_2:
