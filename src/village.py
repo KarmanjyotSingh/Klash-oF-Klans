@@ -424,6 +424,11 @@ class Village():
             self.village[balloons.position[0]
                          ][balloons.position[1]] = balloons.texture
 
+        # self.village[self.queen.position[0]
+        #              ][self.queen.position[1]+16] = Fore.BLACK+Back.BLACK+"Q"+ Style.RESET_ALL
+        # self.village[self.queen.position[0]
+        #              ][self.queen.position[1]+20] = Fore.BLACK+Back.RED+"Q"+ Style.RESET_ALL
+       
         for row in range(macros.DISPLAY_HEIGHT):
             for col in range(macros.DISPLAY_WIDTH):
                 print(self.village[row][col],

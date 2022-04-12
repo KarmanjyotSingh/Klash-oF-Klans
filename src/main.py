@@ -1,3 +1,4 @@
+from pickle import TRUE
 from src.village import Village
 from src.input import *
 import src.globals as macros
@@ -5,23 +6,26 @@ import src.levels as levels
 from src.barbarians import Barabarian
 from src.balloon import Balloon
 from src.archer import Archer
+import threading
 
 
 def handle_input(char, village):
     # defining 1 , 2, 3 as spawning points
     if char == 'z':
         # if village.campsize < macros.CAMP_SIZE:
-        village.campsize += 1
-        village.barbarians.append(Barabarian(
-            village.spawningPoints[0][0], village.spawningPoints[0][1]))
+        if village.barbs > 0:
+            village.barbs -= 1
+            village.barbarians.append(Barabarian(
+                village.spawningPoints[0][0], village.spawningPoints[0][1]))
     elif char == 'x':
-        if village.campsize < macros.CAMP_SIZE:
-            village.campsize += 1
+        if village.barbs > 0:
+            village.barbs -= 1
+
             village.barbarians.append(Barabarian(
                 village.spawningPoints[1][0], village.spawningPoints[1][1]))
     elif char == 'c':
-        if village.campsize < macros.CAMP_SIZE:
-            village.campsize += 1
+        if village.barbs > 0:
+            village.barbs -= 1
             village.barbarians.append(Barabarian(
                 village.spawningPoints[2][0], village.spawningPoints[2][1]))
     elif char == 'r':
@@ -69,6 +73,14 @@ def handle_input(char, village):
             village.archs -= 1
             village.archers.append(
                 Archer(village.spawningPoints[2][0], village.spawningPoints[2][1]))
+
+    elif char == 'f':
+        if village.troop == "QUEEN":
+            #  queen special move
+            #  queen showing her moves
+            thread = threading.Timer(
+                1, village.queen.moveQueen, [' ', village, "TRUE"])
+            thread.start()
 
 
 def Run(choice):

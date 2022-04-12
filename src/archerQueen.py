@@ -1,3 +1,4 @@
+from pickle import TRUE
 from src.troop import Troop
 import src.globals as macros
 from colorama import Fore, Style, Back
@@ -12,11 +13,9 @@ class Queen(Troop):
         super().__init__(x, y, macros.QUEEN_HEALTH_POINTS,
                          macros.QUEEN_DAMAGE, macros.QUEEN_MOVEMENT_SPEED)
         self.troop_type = macros.QUEEN
-        self.AoE = 5
-        self.attack_distance = 8
         self.move_direction = ""
 
-    def moveQueen(self, char, village):
+    def moveQueen(self, char, village, flag="FALSE"):
         if char == 'w' or char == 'a' or char == 's' or char == 'd':
             self.move_direction = char
         if char == 'w':
@@ -65,22 +64,28 @@ class Queen(Troop):
                         self.position[0], self.position[1] + steps)
         elif char == ' ':
             if self.health > 0:
-                self.attackQueen(village)
+                print(flag)
+                if flag == "TRUE":
+                    self.attackQueen(village, 9, 16)
+                else:
+                    self.attackQueen(village)
 
-    def attackQueen(self, village):
+    def attackQueen(self, village, area_parameter=5, dist_parameter=8):
         # choose the nearest building in vicinity of attack distance
         # attack that building , and neighbouring whatever lies in area of AoE
         # find the nearest building
         # find the nearest building in the move direction4
         attack_coord = []
-        AOE = int(self.AoE/2)
+        print(area_parameter)
+        print(dist_parameter)
+        AOE = int(area_parameter/2)
 
         if self.move_direction == 'w':
             curr_y = self.position[0]
-            if curr_y - self.attack_distance < 1:
+            if curr_y - dist_parameter < 1:
                 return
             else:
-                coord = curr_y - self.attack_distance
+                coord = curr_y - dist_parameter
 
                 top = coord - AOE  # attack the townhall and the nearby defense area thingys
                 bottom = coord + AOE+1
@@ -106,7 +111,7 @@ class Queen(Troop):
                         else:
                             attack_coord.append((i, j))
         elif self.move_direction == 's':
-            coord = self.position[0] + self.attack_distance
+            coord = self.position[0] + dist_parameter
             if coord >= village.height - 1:
                 return
             else:
@@ -133,7 +138,7 @@ class Queen(Troop):
                         else:
                             attack_coord.append((i, j))
         elif self.move_direction == 'a':
-            coord = self.position[1] - self.attack_distance
+            coord = self.position[1] - dist_parameter
             if coord < 1:
                 return
             else:
@@ -160,7 +165,7 @@ class Queen(Troop):
                         else:
                             attack_coord.append((i, j))
         elif self.move_direction == 'd':
-            coord = self.position[1]+self.attack_distance
+            coord = self.position[1]+dist_parameter
             if coord >= village.width - 1:
                 return
             else:
@@ -227,7 +232,7 @@ class Queen(Troop):
                         village.cannons[itr].active = False
                         village.cannons[itr].texture = macros.BACKGROUND_PIXEL
                         village.cannons[itr].tile = macros.EMPTY
-           
+
             if village.tiles[coord[0]][coord[1]] == macros.TILE_WALL_LEVEL_1 or village.tiles[coord[0]][coord[1]] == macros.TILE_WALL_LEVEL_2 or village.tiles[coord[0]][coord[1]] == macros.TILE_WALL_LEVEL_3:
                 level = 1
                 if village.tiles[coord[0]][coord[1]] == macros.TILE_WALL_LEVEL_2:
