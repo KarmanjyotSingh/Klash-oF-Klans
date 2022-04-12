@@ -128,10 +128,6 @@ class WizardTower(Building):
                                       ][balloon.position[1]] = macros.EMPTY
         if village.troop == "KING":
             if village.king.health > 0:
-                print("ERRRRR")
-                print(position[0])
-                print(position[1])
-                print("EERRR")
                 if abs(position[0]-village.king.position[0])+abs(position[1]-village.king.position[1]) <= 2:
                     village.king.health -= self.damage
                     if village.king.health <= 0:

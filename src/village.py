@@ -1,5 +1,6 @@
 from colorama import Fore, Style, Back
 from os import system as sys
+
 import math
 from time import *
 import src.globals as macros
@@ -10,13 +11,20 @@ from src.cannon import Cannon
 from src.wall import Wall
 from src.barbarians import Barabarian
 from src.spell import RageSpell, HealingSpell
-
-from colorama import init
+from src.archerQueen import Queen
+import src.levels as LEVELS
+from src.wizardTower import WizardTower
 
 
 class Village():
 
-    def __init__(self):
+    def __init__(self, level=1, choice=1):
+
+        self.troop = "KING"
+        if choice == 2:
+            self.troop = "QUEEN"
+        self.level = level
+
         # specify the village ka dimension
         self.width = macros.VILLAGE_WIDTH
         self.height = macros.VILLAGE_HEIGHT
@@ -25,17 +33,31 @@ class Village():
         # initialize the village tiles
         self.tiles = [[0 for i in range(macros.DISPLAY_WIDTH)]
                       for j in range(macros.DISPLAY_HEIGHT)]
-        self.king = King(10, 1)
+
+        if self.troop == "KING":
+            self.king = King(10, 1)
+        else:
+            self.queen = Queen(10, 1)
+
         self.townhall = TownHall(3, 24)
-        self.coordHut = [(1, 1), (1, macros.VILLAGE_WIDTH-2), (macros.VILLAGE_HEIGHT -
-                                                               2, macros.VILLAGE_WIDTH-2), (macros.VILLAGE_HEIGHT-2, 1), (1, int(macros.VILLAGE_WIDTH/2))]
-        self.huts = [Hut(x, y) for (x, y) in self.coordHut]
-        self.coordCannon = [(macros.COORD_TOWN_HALL[0]-4, macros.COORD_TOWN_HALL[1]+3 + len(self.townhall.drawing[0])), (macros.COORD_TOWN_HALL[0] -
-                            4, macros.COORD_TOWN_HALL[1]-4), (macros.COORD_TOWN_HALL[0]+len(self.townhall.drawing) + 3, macros.COORD_TOWN_HALL[1]+3 + len(self.townhall.drawing[0])), (macros.COORD_TOWN_HALL[0]+len(self.townhall.drawing) + 3, macros.COORD_TOWN_HALL[1]-4)]
-        self.cannons = [Cannon(x, y) for (x, y) in self.coordCannon]
+        self.coordCannon = LEVELS.Level1["coord_cannon"]
         self.spawningPoints = [
             (int(macros.VILLAGE_HEIGHT)-2, int(macros.VILLAGE_WIDTH/2)), (int(macros.VILLAGE_HEIGHT/2), int(macros.VILLAGE_WIDTH)-2), (int(macros.VILLAGE_HEIGHT/2), 1)]
         self.coordWall = []
+        self.coordWizard = LEVELS.Level1["coord_wizard"]
+        self.barbs = 6
+        self.archs = 6
+        self.ball = 3
+        if level == 2:
+            self.coordCannon = LEVELS.Level2["coord_cannon"]
+            self.coordWizard = LEVELS.Level2["coord_wizard"]
+        elif level == 3:
+            self.coordCannon = LEVELS.Level3["coord_cannon"]
+            self.coordWizard = LEVELS.Level3["coord_wizard"]
+
+        self.cannons = [Cannon(x, y) for (x, y) in self.coordCannon]
+        self.wizardTower = [WizardTower(x, y) for (x, y) in self.coordWizard]
+
         left = int((macros.VILLAGE_WIDTH/2) - 10) - 3
         right = int(macros.VILLAGE_WIDTH/2 - 10 +
                     len(self.townhall.drawing[0])-1)+3
@@ -47,6 +69,11 @@ class Village():
         self.healSpell = 0
         self.rageSpell = 0
         self.campsize = 0
+
+        self.coordHut = [(top + 1, left + 1), (top+1, left + 2),
+                         (top + 1, left+3), (bottom-1, right-2), (bottom-1, right-3), (bottom-1, right-1)]
+        self.huts = [Hut(x, y) for (x, y) in self.coordHut]
+
         for i in range(top, bottom+1):
             if self.coordWall.count((i, left, 1)) == 0:
                 self.coordWall.append((i, left, 1))
@@ -85,6 +112,8 @@ class Village():
         for coord in self.coordCannon:
             self.activeBuildings.append(coord)
 
+        for coord in self.coordWizard:
+            self.activeBuildings.append(coord)
         # add all the huts to the list
 
         for coord in self.coordHut:
@@ -98,13 +127,23 @@ class Village():
                 self.activeBuildings.append((i, j))
 
         self.barbarians = []
+        self.archers = []
+        self.balloons = []
         f = open('src/logo.txt', 'r')
         self.logo = (''.join([line for line in f])).split('\n')
 
     def isActive(self):
 
-        for coord in self.activeBuildings:
-            if self.village[coord[0]][coord[1]] != macros.BACKGROUND_PIXEL:
+        for hut in self.huts:
+            if hut.health > 0:
+                return True
+        if self.townhall.health > 0:
+            return True
+        for can in self.cannons:
+            if can.health > 0:
+                return True
+        for wiz in self.wizardTower:
+            if wiz.health > 0:
                 return True
 
         return False
@@ -143,13 +182,23 @@ class Village():
 
     def renderScoreBoard(self):
 
-        king_health = self.king.health
-        max_health = macros.KING_HEALTH_POINTS
-        display_health = math.ceil(float((king_health/max_health) *
-                                         macros.DISPLAY_WIDTH))
+        if self.troop == "KING":
+            king_health = self.king.health
+            max_health = macros.KING_HEALTH_POINTS
+            display_health = math.ceil(float((king_health/max_health) *
+                                             macros.DISPLAY_WIDTH))
 
-        for i in range(display_health):
-            self.village[0][i] = Back.RED + " " + Style.RESET_ALL
+            for i in range(display_health):
+                self.village[0][i] = Back.RED + " " + Style.RESET_ALL
+
+        else:
+            queen_health = self.queen.health
+            max_health = macros.QUEEN_HEALTH_POINTS
+            display_health = math.ceil(float((queen_health/max_health) *
+                                             macros.DISPLAY_WIDTH))
+
+            for i in range(display_health):
+                self.village[0][i] = Back.RED + " " + Style.RESET_ALL
 
         # for i in range(macros.VILLAGE_WIDTH+2, macros.DISPLAY_WIDTH):
         r = 5
@@ -195,7 +244,7 @@ class Village():
             self.village[i.position[0]][i.position[1]] = i.texture
             self.tiles[i.position[0]][i.position[1]] = i.tile
 
-    def render(self):
+    def render(self, choice=1):
         # initialize the village
         # sys('clear')
         print("\033[%d;%dH" % (0, 0))
@@ -288,16 +337,43 @@ class Village():
                 self.tiles[x][y] = self.cannons[itr].tile
             itr += 1
         # render the spawning points
+        itr = 0
+        for (x, y) in self.coordWizard:
+            if self.wizardTower[itr].health > 0:
+                self.tiles[x][y] = self.wizardTower[itr].tile
+                health = float(
+                    self.wizardTower[itr].health/macros.WIZARD_HEALTH)
+                texture = macros.WIZARD
+                if self.wizardTower[itr].texture == macros.WIZARD_SHOT:
+                    self.village[x][y] = self.wizardTower[itr].texture
+                    self.tiles[x][y] = self.wizardTower[itr].tile
+                else:
+                    if health > 0.5:
+                        texture = macros.WIZARD
+                    elif health > 0.2:
+                        texture = Back.LIGHTMAGENTA_EX+Fore.BLACK+"W" + Style.RESET_ALL
+                    else:
+                        texture = Back.LIGHTRED_EX + Fore.BLACK+"W" + Style.RESET_ALL
+                    self.village[x][y] = texture
+            else:
+                self.village[x][y] = self.wizardTower[itr].texture
+                self.tiles[x][y] = self.wizardTower[itr].tile
+            itr += 1
+
         for (x, y) in self.spawningPoints:
             self.village[x][y] = macros.RED_PIXEL
 
         # render the king
-        self.village[self.king.position[0]
-                     ][self.king.position[1]] = macros.KING_TILE if self.king.health > 0 else macros.GRAVE_TILE
-
+        if self.troop == "KING":
+            self.village[self.king.position[0]
+                         ][self.king.position[1]] = macros.KING_TILE if self.king.health > 0 else macros.GRAVE_TILE
+        elif self.troop == "QUEEN":
+            self.village[self.queen.position[0]][self.queen.position[1]
+                                                 ] = macros.QUEEN_TILE if self.queen.health > 0 else macros.GRAVE_TILE
         # render barbarians
         for barbarians in self.barbarians:
             if barbarians.alive == True:
+                #   /  print(barbarians.health)
                 health = float(barbarians.health /
                                macros.BARBARIAN_HEALTH_POINTS)
                 if health > 0.5:
@@ -312,8 +388,42 @@ class Village():
             self.village[barbarians.position[0]
                          ][barbarians.position[1]] = barbarians.texture
 
-        # finally draw the village
-        # self.village[21][71] = macros.RED_PIXEL
+        for archers in self.archers:
+            if archers.alive == True:
+                # print(archers.movement_speed)
+                health = float((2*archers.health) /
+                               macros.BARBARIAN_HEALTH_POINTS)
+                if health > 0.5:
+                    archers.texture = macros.ARCHER_TILE
+                elif health > 0.2:
+                    archers.texture = Back.LIGHTCYAN_EX + Fore.BLACK + "A" + Style.RESET_ALL
+                elif health > 0:
+                    archers.texture = Back.LIGHTYELLOW_EX + Fore.BLACK + "A" + Style.RESET_ALL
+                else:
+                    archers.texture = macros.GRAVE_TILE
+
+            self.village[archers.position[0]
+                         ][archers.position[1]] = archers.texture
+        for balloons in self.balloons:
+            if balloons.alive == True:
+                health = float(balloons.health / macros.BALLOON_HEALTH)
+                # print(balloons.texture)
+                # if balloons.texture != macros.BALLOON_SHOT:
+                if health > 0.5:
+                    # print("ok")
+                    balloons.texture = macros.BALLOON_TEXTURE
+                elif health > 0.2:
+                    print("notok1")
+                    balloons.texture = Back.LIGHTCYAN_EX + Fore.BLACK + "O" + Style.RESET_ALL
+                elif health > 0:
+                    # print("notok2")
+                    balloons.texture = Back.LIGHTYELLOW_EX + Fore.BLACK + "O" + Style.RESET_ALL
+                else:
+                    balloons.texture = macros.GRAVE_TILE
+
+            self.village[balloons.position[0]
+                         ][balloons.position[1]] = balloons.texture
+
         for row in range(macros.DISPLAY_HEIGHT):
             for col in range(macros.DISPLAY_WIDTH):
                 print(self.village[row][col],
@@ -323,8 +433,20 @@ class Village():
         for cannon in self.cannons:
             cannon.find_target(self)
 
+    def shootWizard(self):
+        for wizard in self.wizardTower:
+            wizard.find_target(self)
+
     def moveBarbs(self):
         for barbs in self.barbarians:
             ret = barbs.move_barbarian(self)
             if ret == True:
                 return True
+
+    def moveBall(self):
+        for ball in self.balloons:
+            ball.move_balloon(self)
+
+    def moveArcher(self):
+        for archer in self.archers:
+            archer.move_archer(self)
