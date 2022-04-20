@@ -90,6 +90,7 @@ def Run(choice):
     village = Village(1, choice)
     village.render()
     inputArr = []
+    inputArr.append(choice)
     f = open('src/numreplay.txt', 'r+')
     data = f.readlines()
     n = int(data[0])
